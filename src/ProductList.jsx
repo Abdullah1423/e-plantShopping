@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import "./ProductList.css";
 import CartItem from "./CartItem";
 import { addItem } from "./CartSlice";
+import { useSelector, useDispatch } from "react-redux";
+
 function ProductList() {
   const [showCart, setShowCart] = useState(false);
   const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
   const [addedToCart, setAddedToCart] = useState({});
+  const dispatch = useDispatch(); // Initialize dispatch
+  const totalQuantity = useSelector((state) => state.cart.totalQuantity);
 
   const plantsArray = [
     {
@@ -280,16 +284,15 @@ function ProductList() {
   };
 
   const handleContinueShopping = (e) => {
-    e.preventDefault();
     setShowCart(false);
   };
 
   const handleAddToCart = (product) => {
     dispatch(addItem(product));
     setAddedToCart((prevState) => ({
-       ...prevState,
-       [product.name]: true, // Set the product name as key and value as true to indicate it's added to cart
-     }));
+      ...prevState,
+      [product.name]: true, // Set the product name as key and value as true to indicate it's added to cart
+    }));
   };
   return (
     <div>
@@ -339,6 +342,9 @@ function ProductList() {
                     id="mainIconPathAttribute"
                   ></path>
                 </svg>
+                {totalQuantity > 0 && (
+                  <span className="cart-badge">{totalQuantity}</span> // Display total quantity
+                )}{" "}
               </h1>
             </a>
           </div>
@@ -363,7 +369,7 @@ function ProductList() {
                     <p>{plant.description}</p>
                     <p className="product-price">{plant.cost}</p>
 
-                 <button
+                    <button
                       className="product-button"
                       onClick={() => handleAddToCart(plant)}
                     >
